@@ -21,4 +21,18 @@
 - the only job here is to store and retrieve the notes records only 
 - this is file that has to be modified if i switch the saving system from chrome local to some other option
 
-### 
+### leetcode-adapter.js 
+- this uses window and document objects which are made available only by the file which is injected into the webpage 
+- the main job is to identify the problem webpage and extract it so that it is passed forward properly 
+- we also ignore the non problem pages by returning a `null` value instead of error to the extractTitle function 
+
+### content.js 
+- This is the file which wires the independent functions or jobs into the main sequence of operation flow 
+- currentQuestionId is tracked according to the change in URL and hence the rerendering of the panel is avoided as leetcode fires multiple events for one navigation 
+- handleQuestionChange is called twice, once is for the fresh page pull and another is when the navigation changes after the fresh pull 
+- handleSave is passed as a callback for onSave intro renderPanel so that the panel.js can call onSave without needing to know how saving actually works underneath 
+
+### constants.js 
+- the whole value is being the single source of truth for multiple strings across file boundaries 
+- Storage key prefix is used in notes-store.js buildKey() so that every stored key has it. 
+- message type is used in background.js as well as content.js and this pattern is used whenever two separate JS contexts need to talk so we can define the vocabulary here 

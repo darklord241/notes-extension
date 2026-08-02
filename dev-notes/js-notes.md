@@ -1,3 +1,5 @@
 - functions in js dont require their argument's data type to be declared as it is a dynamically typed language 
 - `${}` is used for string interpolation which means embedding variables and expressions inside a string and it is used with template literals/backticks 
 - `export` keyword is used to make that function accessible to other files and modules. similar to access specifiers in java but js has private as default
+- regex is used to identify the pattern in the url to check if the webpage is for a question or not 
+- 
