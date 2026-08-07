@@ -57,3 +57,10 @@ export function updatePanel(savedRecord) {
         if(panelElements) panelElements.status.textContent = "";
     }, 1500);
 }
+
+export function removePanel() {
+    if(!shadowHost) return;
+    const existing = shadowRoot.querySelector(".dsanotes-panel");
+    if(existing) existing.remove();
+    panelElements = null;
+}

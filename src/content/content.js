@@ -9,6 +9,7 @@ async function handleQuestionChange() {
     const info = leetcodeAdapter.getQuestionInfo();
     if(!info.isQuestionPage) {
         currentQuestionId = null;
+        removePanel();
         return;
     }
     currentQuestionId = info.id;

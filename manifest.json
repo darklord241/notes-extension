@@ -1,7 +1,7 @@
 { 
     "manifest_version": 3,
     "name": "DSA_Notes",
-    "version": "0.1.0",
+    "version": "1",
     "description": "Take notes on DSA questions directly on leetcode",
 
     "permissions": ["storage","webNavigation"],
@@ -14,7 +14,7 @@
 
     "content_scripts": [
         {
-            "matches": ["https://leetcode.com/problems/*"],
+            "matches": ["https://leetcode.com/*"],
             "js": ["src/content/content.js"],
             "css": ["src/content/panel.css"],
             "run_at": "document_idle"
