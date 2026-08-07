@@ -27,7 +27,7 @@ async function handleSave(questionId, noteData) {
     updatePanel(savedRecord);
 }
 
-chrome.runtime.onMessage.addlistener((message) => {
+chrome.runtime.onMessage.addListener((message) => {
     if(message.type == MESSAGE_TYPES.QUESTION_CHANGED) {
         handleQuestionChange();
     }

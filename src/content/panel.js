@@ -11,7 +11,7 @@ function ensureShadowHost() {
     
     const styleLink = document.createElement("link");
     styleLink.rel = "stylesheet";
-    styleLink.href = chrome.runtime.getURL("panel.css");
+    styleLink.href = chrome.runtime.getURL("src/content/panel.css");
     shadowRoot.appendChild(styleLink);
     
     return shadowRoot;
@@ -27,7 +27,7 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
             <span class="dsanotes-title">${title ?? questionId}</span>
             <span class="dsanotes-status"></span>
         </div>
-        <textarea classs="dsanotes-textarea" placeholder="write your notes">${note?.content ?? ""}</textarea>
+        <textarea class="dsanotes-textarea" placeholder="write your notes">${note?.content ?? ""}</textarea>
         <button class="dsanotes-save-btn">Save</button>
     `;
 

@@ -1,4 +1,4 @@
-const WUESTION_URL_PATTERN = /\/problems\/([a-z0-9-]+)\/?/;
+const QUESTION_URL_PATTERN = /\/problems\/([a-z0-9-]+)\/?/;
 
 function getQuestionInfo() {
     const match = window.location.pathname.match(QUESTION_URL_PATTERN);

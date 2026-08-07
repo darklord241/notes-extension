@@ -4,26 +4,27 @@
     "version": "0.1.0",
     "description": "Take notes on DSA questions directly on leetcode",
 
-    "permission": ["storage","webNavigation"],
+    "permissions": ["storage","webNavigation"],
     "host_permissions": ["https://leetcode.com/*"],
 
     "background": {
-        "service_worker": "background.js",
+        "service_worker": "src/background/background.js",
         "type": "module"
     },
 
     "content_scripts": [
         {
             "matches": ["https://leetcode.com/problems/*"],
-            "js": ["content.js"],
-            "css": ["panel.css"],
+            "js": ["src/content/content.js"],
+            "css": ["src/content/panel.css"],
             "run_at": "document_idle"
         }
     ],
 
-    "icons": {
-        "16": "",
-        "48": "",
-        "128": ""
-    }
+    "web_accessible_resources": [
+        {
+            "resources": ["src/content/panel.css"],
+            "matches": ["https://leetcode.com/*"]
+        }
+    ]
 }
