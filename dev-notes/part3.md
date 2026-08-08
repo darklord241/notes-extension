@@ -25,3 +25,7 @@ The ones i received and solved after my first run
     - the listener is made to be active on all the pages 
     - this is done by extending the permissions and making another function which deals with the case of non-problem pages
     - this adds extra overhead as we load up the listener on pages where we dont require it but since the script for this situation is quite small and simple, it wont be much of performance problem  
+
+### error after patch 
+- i added the removePanel function but didnt actually implement it since the background worker was still told to ignore non problem pages so had to remove that 
+- also i hadnt imported the method from panel.js to content.js so a dumb mistake 

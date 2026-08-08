@@ -1,6 +1,6 @@
 import { leetcodeAdapter } from "../adapters/leetcode-adapter.js";
 import { getNote, saveNote } from "../storage/notes-store.js";
-import { renderPanel, updatePanel } from "./panel.js";
+import { renderPanel, updatePanel, removePanel } from "./panel.js";
 import { MESSAGE_TYPES } from "../shared/constants.js";
 
 let currentQuestionId = null;
