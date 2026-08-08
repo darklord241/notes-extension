@@ -2,8 +2,15 @@ let shadowHost = null;
 let shadowRoot = null;
 let panelElements = null;
 
+function slugToTitle(slug) {
+  return slug
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 function ensureShadowHost() {
-    if(shadowHost) return shadowHost;
+    if(shadowHost) return shadowRoot;
     shadowHost = document.createElement("div");
     shadowHost.id = "dsanotes-host";
     document.body.appendChild(shadowHost);
@@ -18,13 +25,15 @@ function ensureShadowHost() {
 }
 
 export function renderPanel({ site, questionId, title, note, onSave}) {
+    // console.log("renderPanel called with", questionId, title);
     const root = ensureShadowHost();
+    // console.log("root reference", root, "children count", root.children.length);
     const container = document.createElement("div");
     container.className = "dsanotes-panel";
     
     container.innerHTML = `
         <div class="dsanotes-header">
-            <span class="dsanotes-title">${title ?? questionId}</span>
+            <span class="dsanotes-title">${slugToTitle(questionId)}</span>
             <span class="dsanotes-status"></span>
         </div>
         <textarea class="dsanotes-textarea" placeholder="write your notes">${note?.content ?? ""}</textarea>
@@ -32,16 +41,17 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
     `;
 
     const existing = root.querySelector(".dsanotes-panel");
+    // console.log("existing panel found?", !!existing);
     if(existing) existing.remove();
     root.appendChild(container);
-    
+    // console.log("new panel appended");
+
     const textarea = container.querySelector(".dsanotes-textarea");
     const saveBtn = container.querySelector(".dsanotes-save-btn");
     const status = container.querySelector(".dsanotes-status");
 
     saveBtn.addEventListener("click", () => {
         onSave(questionId, {
-            title,
             content: textarea.value,
             createdAt: note?.createdAt
         });

@@ -1,7 +1,7 @@
 import { STORAGE_KEY_PREFIX } from "../shared/constants.js";
 
 function buildKey(site, questionId) {
-    return '${STORAGE_KEY_PREFIX}:${site}:${questionId}';
+    return `${STORAGE_KEY_PREFIX}:${site}:${questionId}`;
 }
 
 export async function getNote(site, questionId) {
@@ -15,7 +15,6 @@ export async function saveNote(site, questionId, noteData) {
     const record = {
         site,
         questionId,
-        title: noteData.title,
         content: noteData.content,
         tags: noteData.tags ?? [],
         updatedAt: Date.now(),

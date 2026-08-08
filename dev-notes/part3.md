@@ -29,3 +29,13 @@ The ones i received and solved after my first run
 ### error after patch 
 - i added the removePanel function but didnt actually implement it since the background worker was still told to ignore non problem pages so had to remove that 
 - also i hadnt imported the method from panel.js to content.js so a dumb mistake 
+
+### more errors 
+- Stale title on navigation — extractTitle() was reading LeetCode's DOM before React had finished re-rendering the new title, so the panel briefly (or persistently) showed the previous question's title. 
+- Duplicate/overlapping handleQuestionChange() calls — multiple "QUESTION_CHANGED" messages could arrive close together, and since the function is async, a second call could start before the first finished, causing two independent render cycles to race. Fixed with an isProcessing lock so only one call runs to completion at a time.
+- even after the panel-duplication fix, some navigations still hit the DOM before the title element existed at all, returning null instead of stale-but-present text. Confirmed via manual querySelector checks that div.text-title-large is a valid, reliable selector once the page settles, but a fixed 150ms delay wasn't consistently enough margin. 
+- Replaced the fixed delay with a waitForTitleElement() helper using MutationObserver, which waits for the actual element to appear (with a 2-second timeout safety net) rather than guessing a duration. 
+
+### MutationObserver 
+- It is a browser API that watches a part of the DOM and fires a callback whenever it changes (elements added/removed, attributes changed, etc.) — here it's watching document.body for any new nodes being added anywhere inside it (childList: true, subtree: true), and every time something changes, it re-checks whether the title element now exist
+- 
