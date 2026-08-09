@@ -1,6 +1,7 @@
 let shadowHost = null;
 let shadowRoot = null;
 let panelElements = null;
+let autosaveTimer = null;
 
 function slugToTitle(slug) {
   return slug
@@ -46,15 +47,40 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
     root.appendChild(container);
     // console.log("new panel appended");
 
+    if(autosaveTimer) {
+        clearTimeout(autosaveTimer);
+        autosaveTimer= null;
+    }
+
     const textarea = container.querySelector(".dsanotes-textarea");
     const saveBtn = container.querySelector(".dsanotes-save-btn");
     const status = container.querySelector(".dsanotes-status");
 
-    saveBtn.addEventListener("click", () => {
-        onSave(questionId, {
+    let lastSavedContent = note?.content ?? "";
+
+    function doSave() {
+        status.textContent = "Saving ...";
+        onSave( questionId, {
             content: textarea.value,
             createdAt: note?.createdAt
         });
+        lastSavedContent = textarea.value;
+    }
+
+    function handleInput() {
+        const isUpdated = textarea.value !== lastSavedContent;
+        status.textContent = isUpdated ? "Unsaved" : "";
+        if(autosaveTimer) clearTimeout(autosaveTimer);
+        if(isUpdated) {
+            autosaveTimer = setTimeout(doSave, 1000);
+        }
+    }
+
+    textarea.addEventListener("input",handleInput);
+
+    saveBtn.addEventListener("click", () => {
+        if(autosaveTimer) clearTimeout(autosaveTimer);
+        doSave();
     });
 
     panelElements = { container, textarea, status };
@@ -73,4 +99,8 @@ export function removePanel() {
     const existing = shadowRoot.querySelector(".dsanotes-panel");
     if(existing) existing.remove();
     panelElements = null;
+    if(autosaveTimer) {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = null;
+    }
 }
