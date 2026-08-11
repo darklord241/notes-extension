@@ -2,6 +2,7 @@ let shadowHost = null;
 let shadowRoot = null;
 let panelElements = null;
 let autosaveTimer = null;
+let isCollapsed = false;
 
 function slugToTitle(slug) {
   return slug
@@ -25,6 +26,41 @@ function ensureShadowHost() {
     return shadowRoot;
 }
 
+function makeDraggable(panelEl, headerEl) {
+  let startX, startY, startLeft, startTop;
+
+  function onMouseDown(e) {
+    if (e.target.closest(".dsanotes-collapse-btn")) return;
+
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = panelEl.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    panelEl.style.right = "auto";
+    panelEl.style.left = `${startLeft}px`;
+    panelEl.style.top = `${startTop}px`;
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }
+
+  function onMouseMove(e) {
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
+    panelEl.style.left = `${startLeft + deltaX}px`;
+    panelEl.style.top = `${startTop + deltaY}px`;
+  }
+
+  function onMouseUp() {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  }
+
+  headerEl.addEventListener("mousedown", onMouseDown);
+}
+
 export function renderPanel({ site, questionId, title, note, onSave}) {
     // console.log("renderPanel called with", questionId, title);
     const root = ensureShadowHost();
@@ -35,10 +71,15 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
     container.innerHTML = `
         <div class="dsanotes-header">
             <span class="dsanotes-title">${slugToTitle(questionId)}</span>
-            <span class="dsanotes-status"></span>
+            <div class="dsanotes-header-controls">
+                <span class="dsanotes-status"></span>
+                <button class="dsanotes-collapse-btn">−</button>
+            </div>
         </div>
-        <textarea class="dsanotes-textarea" placeholder="write your notes">${note?.content ?? ""}</textarea>
-        <button class="dsanotes-save-btn">Save</button>
+        <div class="dsanotes-body">
+            <textarea class="dsanotes-textarea" placeholder="write your notes">${note?.content ?? ""}</textarea>
+            <button class="dsanotes-save-btn">Save</button>
+        </div>
     `;
 
     const existing = root.querySelector(".dsanotes-panel");
@@ -52,9 +93,19 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         autosaveTimer= null;
     }
 
+    const header = container.querySelector(".dsanotes-header");
+    const collapseBtn = container.querySelector(".dsanotes-collapse-btn");
     const textarea = container.querySelector(".dsanotes-textarea");
     const saveBtn = container.querySelector(".dsanotes-save-btn");
     const status = container.querySelector(".dsanotes-status");
+
+    makeDraggable(container, header);
+
+    collapseBtn.addEventListener("click", () => {
+        isCollapsed = !isCollapsed;
+        container.classList.toggle("dsanotes-collapsed", isCollapsed);
+        collapseBtn.textContent = isCollapsed ? "+" : "−";
+    });
 
     let lastSavedContent = note?.content ?? "";
 
