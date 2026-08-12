@@ -26,5 +26,14 @@
             "resources": ["src/content/panel.css"],
             "matches": ["https://leetcode.com/*"]
         }
-    ]
+    ],
+
+    "commands": {
+        "toggle_panel": {
+            "suggested-key": {
+                "default": "Alt+L"
+            },
+            "description": "Toggle the notes panel"
+        }
+    }
 }

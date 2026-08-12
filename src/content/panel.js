@@ -2,7 +2,7 @@ let shadowHost = null;
 let shadowRoot = null;
 let panelElements = null;
 let autosaveTimer = null;
-let isCollapsed = false;
+let isCollapsed = true;
 
 function slugToTitle(slug) {
   return slug
@@ -61,19 +61,28 @@ function makeDraggable(panelEl, headerEl) {
   headerEl.addEventListener("mousedown", onMouseDown);
 }
 
+export function togglePanel() {
+    if(!panelElements) return;
+    const container = panelElements.container;
+    const collapseBtn = container.querySelector(".dsanotes-collapse-btn");
+    isCollapsed = !isCollapsed;
+    container.classList.toggle("dsanotes-collapsed",isCollapsed);
+    collapseBtn.textContent = isCollapsed ? "+":"-";
+}
+
 export function renderPanel({ site, questionId, title, note, onSave}) {
     // console.log("renderPanel called with", questionId, title);
     const root = ensureShadowHost();
     // console.log("root reference", root, "children count", root.children.length);
     const container = document.createElement("div");
-    container.className = "dsanotes-panel";
+    container.className = `dsanotes-panel${isCollapsed ? " dsanotes-collapsed" : ""}`;
     
     container.innerHTML = `
         <div class="dsanotes-header">
             <span class="dsanotes-title">${slugToTitle(questionId)}</span>
             <div class="dsanotes-header-controls">
                 <span class="dsanotes-status"></span>
-                <button class="dsanotes-collapse-btn">−</button>
+                <button class="dsanotes-collapse-btn">${isCollapsed ? "+":"-"}</button>
             </div>
         </div>
         <div class="dsanotes-body">
@@ -101,11 +110,7 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
 
     makeDraggable(container, header);
 
-    collapseBtn.addEventListener("click", () => {
-        isCollapsed = !isCollapsed;
-        container.classList.toggle("dsanotes-collapsed", isCollapsed);
-        collapseBtn.textContent = isCollapsed ? "+" : "−";
-    });
+    collapseBtn.addEventListener("click", togglePanel);
 
     let lastSavedContent = note?.content ?? "";
 

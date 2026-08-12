@@ -10,11 +10,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #1e1e1e;
-  color: #e0e0e0;
-  border: 1px solid #3a3a3a;
+  background: #1a1b2e;
+  color: #e5e5f0;
+  border: 1px solid #3d3b64;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   font-family: sans-serif;
   font-size: 14px;
   z-index: 999999;
@@ -25,8 +25,56 @@
 .dsanotes-panel.dsanotes-collapsed {
   resize: none;
   height: auto !important;
+  min-height: 0 !important;
   width: auto !important;
+  min-width: 180px;
   overflow: visible;
+}
+
+.dsanotes-header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  cursor: grab;
+  margin-bottom: 8px;
+  user-select: none;
+  gap: 8px;
+}
+
+.dsanotes-header:active {
+  cursor: grabbing;
+}
+
+.dsanotes-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.dsanotes-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.dsanotes-status {
+  font-size: 12px;
+  color: #14b8a6;
+}
+
+.dsanotes-collapse-btn {
+  background: none;
+  border: none;
+  color: #e5e5f0;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+  line-height: 1;
 }
 
 .dsanotes-body {
@@ -44,9 +92,9 @@
   flex: 1;
   width: 100%;
   min-height: 0;
-  background: #2a2a2a;
-  color: #e0e0e0;
-  border: 1px solid #3a3a3a;
+  background: #22233d;
+  color: #e5e5f0;
+  border: 1px solid #3d3b64;
   border-radius: 4px;
   padding: 8px;
   resize: none;
@@ -55,4 +103,14 @@
   font-size: 13px;
   line-height: 1.5;
   margin-bottom: 8px;
+}
+
+.dsanotes-save-btn {
+  padding: 6px 12px;
+  background: #14b8a6;
+  color: #0a0a14;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
 }

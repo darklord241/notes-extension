@@ -1,6 +1,6 @@
 import { leetcodeAdapter } from "../adapters/leetcode-adapter.js";
 import { getNote, saveNote } from "../storage/notes-store.js";
-import { renderPanel, updatePanel, removePanel } from "./panel.js";
+import { renderPanel, updatePanel, removePanel, togglePanel } from "./panel.js";
 import { MESSAGE_TYPES } from "../shared/constants.js";
 
 let currentQuestionId = null;
@@ -40,8 +40,12 @@ async function handleSave(questionId, noteData) {
 
 chrome.runtime.onMessage.addListener((message) => {
     // console.log("received",message);
-    if(message.type == MESSAGE_TYPES.QUESTION_CHANGED) {
+    if(message.type === MESSAGE_TYPES.QUESTION_CHANGED) {
         handleQuestionChange().catch((err) => console.error("handleQuestionChange failed:",err));
+    }
+    else if(message.type === MESSAGE_TYPES.TOGGLE_PANEL) {
+        // console.log("toggle received in content.js ")
+        togglePanel();
     }
 });
 
