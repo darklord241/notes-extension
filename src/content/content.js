@@ -1,4 +1,5 @@
 import { leetcodeAdapter } from "../adapters/leetcode-adapter.js";
+import { codeforcesAdapter } from "../adapters/codeforces-adapter.js";
 import { getNote, saveNote } from "../storage/notes-store.js";
 import { renderPanel, updatePanel, removePanel, togglePanel } from "./panel.js";
 import { MESSAGE_TYPES } from "../shared/constants.js";
@@ -6,11 +7,21 @@ import { MESSAGE_TYPES } from "../shared/constants.js";
 let currentQuestionId = null;
 let isProcessing = false;
 
+function getActiveAdapter() {
+    const hostname = window.location.hostname;
+    if(hostname.includes("codeforces.com")) return codeforcesAdapter;
+    if(hostname.includes("leetcode.com")) return leetcodeAdapter;
+    return null;
+}
+
 async function handleQuestionChange() {
     if(isProcessing) return;
     isProcessing = true;
     try {
-        const info = leetcodeAdapter.getQuestionInfo();
+        const adapter = getActiveAdapter();
+        if(!adapter) return;
+
+        const info = adapter.getQuestionInfo();
         if(!info.isQuestionPage) {
             currentQuestionId = null;
             removePanel();
@@ -21,20 +32,20 @@ async function handleQuestionChange() {
             return;
         }
         currentQuestionId = info.id;
-        const existingNote = await getNote(leetcodeAdapter.site, info.id);
+        const existingNote = await getNote(adapter.site, info.id);
         renderPanel({
-            site: leetcodeAdapter.site,
+            site: adapter.site,
             questionId: info.id,
             note: existingNote,
-            onSave: handleSave
+            onSave: (questionId, noteData) => handleSave(adapter.site, questionId, noteData)
         });
     } finally {
         isProcessing = false;
     }
 }
 
-async function handleSave(questionId, noteData) {
-    const savedRecord = await saveNote(leetcodeAdapter.site,questionId,noteData);
+async function handleSave(site, questionId, noteData) {
+    const savedRecord = await saveNote(site,questionId,noteData);
     updatePanel(savedRecord);
 }
 

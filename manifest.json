@@ -5,7 +5,7 @@
     "description": "Take notes on DSA questions directly on leetcode",
 
     "permissions": ["storage","webNavigation"],
-    "host_permissions": ["https://leetcode.com/*"],
+    "host_permissions": ["https://leetcode.com/*","https://codeforces.com/*"],
 
     "background": {
         "service_worker": "src/background/background.js",
@@ -14,7 +14,7 @@
 
     "content_scripts": [
         {
-            "matches": ["https://leetcode.com/*"],
+            "matches": ["https://leetcode.com/*","https://codeforces.com/*"],
             "js": ["src/content/content.js"],
             "css": ["src/content/panel.css"],
             "run_at": "document_idle"
@@ -24,13 +24,13 @@
     "web_accessible_resources": [
         {
             "resources": ["src/content/panel.css"],
-            "matches": ["https://leetcode.com/*"]
+            "matches": ["https://leetcode.com/*","https://codeforces.com/*"]
         }
     ],
 
     "commands": {
         "toggle_panel": {
-            "suggested-key": {
+            "suggested_key": {
                 "default": "Alt+L"
             },
             "description": "Toggle the notes panel"
