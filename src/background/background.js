@@ -1,4 +1,16 @@
 import { MESSAGE_TYPES } from "../shared/constants.js";
+import { getNote, saveNote } from "../storage/notes-store.js";
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if(message.type === MESSAGE_TYPES.GET_NOTE) {
+        getNote(message.site, message.questionId).then(sendResponse);
+        return true;
+    }
+    if(message.type === MESSAGE_TYPES.SAVE_NOTE) {
+        saveNote(message.site, message.questionId, message.noteData).then(sendResponse);
+        return true; 
+    }
+});
 
 chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
     if(details.frameId !== 0) return;

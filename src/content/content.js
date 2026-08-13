@@ -1,11 +1,28 @@
 import { leetcodeAdapter } from "../adapters/leetcode-adapter.js";
 import { codeforcesAdapter } from "../adapters/codeforces-adapter.js";
-import { getNote, saveNote } from "../storage/notes-store.js";
 import { renderPanel, updatePanel, removePanel, togglePanel } from "./panel.js";
 import { MESSAGE_TYPES } from "../shared/constants.js";
+// import { migrateOldNotes } from "../storage/migrate.js";
 
 let currentQuestionId = null;
 let isProcessing = false;
+
+function getNote(site, questionId) {
+    return chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.GET_NOTE,
+        site,
+        questionId
+    });
+}
+
+function saveNote(site,questionId,noteData) {
+    return chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.SAVE_NOTE,
+        site,
+        questionId,
+        noteData
+    })
+}
 
 function getActiveAdapter() {
     const hostname = window.location.hostname;
@@ -59,5 +76,15 @@ chrome.runtime.onMessage.addListener((message) => {
         togglePanel();
     }
 });
+
+// yeah had to do this for changing the storage space indexdb to service worker instead of individual sites 
+// const adapter = getActiveAdapter();
+// if (adapter) {
+//   migrateOldNotes(adapter.site).finally(() => {
+//     handleQuestionChange().catch((err) => console.error("handleQuestionChange failed:", err));
+//   });
+// } else {
+//   handleQuestionChange().catch((err) => console.error("handleQuestionChange failed:", err));
+// }
 
 handleQuestionChange().catch((err) => console.error("handleQuestionChange failed:",err));

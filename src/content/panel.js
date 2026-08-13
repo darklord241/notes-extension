@@ -86,10 +86,13 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
             </div>
         </div>
         <div class="dsanotes-body">
-            <textarea class="dsanotes-textarea" placeholder="write your notes">${note?.content ?? ""}</textarea>
+            <textarea class="dsanotes-textarea" placeholder="write your notes"></textarea>
             <button class="dsanotes-save-btn">Save</button>
         </div>
     `;
+
+    const textarea = container.querySelector(".dsanotes-textarea");
+    textarea.value = note?.content ?? "";
 
     const existing = root.querySelector(".dsanotes-panel");
     // console.log("existing panel found?", !!existing);
@@ -104,7 +107,6 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
 
     const header = container.querySelector(".dsanotes-header");
     const collapseBtn = container.querySelector(".dsanotes-collapse-btn");
-    const textarea = container.querySelector(".dsanotes-textarea");
     const saveBtn = container.querySelector(".dsanotes-save-btn");
     const status = container.querySelector(".dsanotes-status");
 
