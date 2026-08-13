@@ -23,15 +23,17 @@ If you'd rather not build from source, download a pre-built zip from the
 [Releases page](<br>/<br>/releases):
 
 1. Download the zip for the version you want (e.g. `dsa-notes-v2.zip`)
-2. Unzip it — `manifest.json` should sit directly inside the unzipped folder
-3. Go to `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select that unzipped folder
+2. Extract it:
+   - **Windows**: right-click the zip → **Extract All**
+   - **macOS**: double-click the zip — Finder extracts it into a new folder automatically
+   - **Linux**: `unzip dsa-notes-v2.zip -d dsa-notes-v2` (a plain `unzip` with no `-d` extracts loose files into your current folder instead of a new one, so `-d` is worth using)
 
 ## Loading into the browser
 
 1. Open `chrome://extensions`
 2. Enable **Developer mode** (toggle, top-right)
 3. Click **Load unpacked**
-4. Select the `dist/` folder
+4. Select the `dist/` folder or unzipped folder 
 5. Open a question page, e.g. `https://leetcode.com/problems/two-sum/`
    or `https://codeforces.com/problemset/problem/2256/A`
 
