@@ -1,6 +1,7 @@
 # DSA Notes Extension
 
-A Chromium browser extension for taking notes on DSA questions (starting with LeetCode). Detects when you're on a single question page, and lets you view/create a note for it that floats on top of the page.
+A Chromium browser extension for taking notes on DSA questions <br>
+Detects when you're on a single question page (LeetCode or Codeforces) <br> 
 
 ## Requirements
 
@@ -16,6 +17,15 @@ npm run build
 
 This produces a `dist/` folder — the actual loadable extension.
 
+## Installing without building
+
+If you'd rather not build from source, download a pre-built zip from the
+[Releases page](<br>/<br>/releases):
+
+1. Download the zip for the version you want (e.g. `dsa-notes-v2.zip`)
+2. Unzip it — `manifest.json` should sit directly inside the unzipped folder
+3. Go to `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select that unzipped folder
+
 ## Loading into the browser
 
 1. Open `chrome://extensions`
@@ -23,36 +33,59 @@ This produces a `dist/` folder — the actual loadable extension.
 3. Click **Load unpacked**
 4. Select the `dist/` folder
 5. Open a question page, e.g. `https://leetcode.com/problems/two-sum/`
+   or `https://codeforces.com/problemset/problem/2256/A`
 
-## Development
+## Versions
 
-```bash
-npm run dev
-```
+**v1** : 
+LeetCode only <br>
+Detects question pages, floating panel with plain-text notes <br>
+Manual save, `chrome.storage.local` for storage <br> 
 
-Runs Vite in watch mode with hot-reload support for the extension. Reload the extension in `chrome://extensions` if changes don't reflect automatically.
+**v2** : 
+Adds Codeforces support via a per-site adapter pattern <br>
+Storage moved to IndexedDB, centralized in the background service worker <br> 
+Autosave with a debounced save-on-pause plus a live unsaved/saved status indicator <br>
+Panel is now draggable, resizable, and collapsible (collapsed by default), with a keyboard shortcut (Alt+L) to toggle it <br> 
 
-## If you don't want to build it yourself
+## Inspecting stored notes
 
-If `dist/` is committed in this repo, you can skip the npm steps entirely — just clone the repo and load the `dist/` folder directly as described above.
+Notes are stored in IndexedDB, owned by the extension's background
+service worker
+
+1. Go to `chrome://extensions`
+2. Click the **"service worker"** link on this extension's card
+3. In the DevTools window that opens, go to **Application → IndexedDB → DsaNotesDB → notes**
+
+You will **not** see note data under a LeetCode or Codeforces tab's own
+Application panel — IndexedDB opened from a page is scoped to that page's
+origin, not the extension. The service worker is the one place with a
+consistent view of all stored notes across every supported site.
 
 ## Project structure
 
 ```
 src/
-├── background/     — service worker, detects SPA navigation
-├── content/         — injected into the page, renders the notes panel
-├── adapters/        — per-site logic (currently: LeetCode)
-├── storage/         — note read/write, backed by chrome.storage.local
-└── shared/          — shared constants (message types, storage keys)
+├── background/   — service worker: owns IndexedDB, detects SPA navigation,
+│                   handles the keyboard shortcut, answers storage requests
+│                   from content scripts via message passing
+├── content/      — injected into the page; orchestrates which adapter is
+│                   active and renders the notes panel
+├── adapters/     — per-site logic: LeetCode, Codeforces (URL parsing,
+│                   question ID extraction)
+├── storage/      — Dexie/IndexedDB access (background-only) and the
+│                   one-time migration from the old per-site local storage
+└── shared/       — shared constants (message types)
 ```
 
 ## Status
 
-- [x] Detect LeetCode question pages
-- [x] Create / save / load notes (plain text)
-- [x] Floating panel UI
-- [ ] Drag to reposition
-- [ ] Cleanup panel on navigating away from a question
+- [x] Detect LeetCode and Codeforces question pages
+- [x] Create / save / load notes (plain text), autosave with debounce
+- [x] Floating, draggable, resizable, collapsible panel
+- [x] Keyboard shortcut to toggle the panel
+- [x] IndexedDB storage, centralized in the background service worker
+- [ ] Delete-note UI (storage function exists, not yet wired to a button)
+- [ ] Export notes to JSON
 - [ ] Markdown support
-- [ ] Additional site adapters (Codeforces, etc.)   
+- [ ] Cross-device sync
