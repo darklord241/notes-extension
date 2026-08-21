@@ -1,1 +1,1 @@
-{"name":"dsa-notes-extension","version":"1","type":"module","scripts":{"dev":"vite","build":"vite build"},"devDependencies":{"@crxjs/vite-plugin":"2.7.1","vite":"^5.0.0"},"dependencies":{"dexie":"^4.4.4"}}
+{"name":"dsa-notes-extension","version":"1","type":"module","scripts":{"dev":"vite","build":"vite build"},"devDependencies":{"@crxjs/vite-plugin":"2.7.1","vite":"^5.0.0"},"dependencies":{"dexie":"^4.4.4","dompurify":"^3.4.14","marked":"^18.0.10"}}

@@ -1,7 +1,18 @@
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+
+marked.setOptions({
+    // line breaks are properly converted to <br> 
+    breaks: true,
+    // github flavoured markdown 
+    gfm: true,
+});
+
 let shadowHost = null;
 let shadowRoot = null;
 let panelElements = null;
 let autosaveTimer = null;
+let previewTimer = null;
 let isCollapsed = true;
 
 function slugToTitle(slug) {
@@ -87,6 +98,7 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         </div>
         <div class="dsanotes-body">
             <textarea class="dsanotes-textarea" placeholder="write your notes"></textarea>
+            <div class="dsanotes-preview" style="display:none;"></div>
             <button class="dsanotes-save-btn">Save</button>
         </div>
     `;
@@ -105,6 +117,7 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         autosaveTimer= null;
     }
 
+    const previewDiv = container.querySelector(".dsanotes-preview");
     const header = container.querySelector(".dsanotes-header");
     const collapseBtn = container.querySelector(".dsanotes-collapse-btn");
     const saveBtn = container.querySelector(".dsanotes-save-btn");
@@ -128,18 +141,51 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
     function handleInput() {
         const isUpdated = textarea.value !== lastSavedContent;
         status.textContent = isUpdated ? "Unsaved" : "";
+
         if(autosaveTimer) clearTimeout(autosaveTimer);
+        if(previewTimer) clearTimeout(previewTimer);
+
         if(isUpdated) {
             autosaveTimer = setTimeout(doSave, 1000);
         }
+        previewTimer = setTimeout(showPreviewMode, 2000);
     }
 
-    textarea.addEventListener("input",handleInput);
+    function renderMarkdownSafely(text) {
+        return DOMPurify.sanitize(marked.parse(text));
+    }
+
+    function showEditMode() {
+        textarea.style.display = 'block';
+        previewDiv.style.display = 'none';
+    }
+
+    function showPreviewMode() {
+        if(!textarea.value.trim()) return; // nothing to render then stay in edit mode 
+        previewDiv.innerHTML = renderMarkdownSafely(textarea.value);
+        textarea.style.display = "none";
+        previewDiv.style.display = "block";
+    }   
+
+    textarea.addEventListener("input",() => {
+        showEditMode();
+        handleInput();
+    });
+
+    previewDiv.addEventListener("click", () => {
+        showEditMode();
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    });
 
     saveBtn.addEventListener("click", () => {
         if(autosaveTimer) clearTimeout(autosaveTimer);
         doSave();
     });
+
+    if(note?.content) {
+        showPreviewMode();
+    }
 
     panelElements = { container, textarea, status };
 }

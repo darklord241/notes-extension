@@ -88,7 +88,8 @@
   display: none;
 }
 
-.dsanotes-textarea {
+.dsanotes-textarea,
+.dsanotes-preview {
   flex: 1;
   width: 100%;
   min-height: 0;
@@ -97,12 +98,52 @@
   border: 1px solid #3d3b64;
   border-radius: 4px;
   padding: 8px;
-  resize: none;
   box-sizing: border-box;
   font-family: "Fira Code", "JetBrains Mono", Consolas, monospace;
   font-size: 13px;
   line-height: 1.5;
   margin-bottom: 8px;
+}
+
+.dsanotes-textarea {
+  resize: none;
+}
+
+.dsanotes-preview {
+  overflow-y: auto;
+  cursor: text;
+}
+
+/* Scale down markdown headings so they don't blow out the panel */
+.dsanotes-preview h1 { font-size: 1.25em; margin: 0.4em 0; }
+.dsanotes-preview h2 { font-size: 1.15em; margin: 0.4em 0; }
+.dsanotes-preview h3 { font-size: 1.05em; margin: 0.3em 0; }
+.dsanotes-preview h4,
+.dsanotes-preview h5,
+.dsanotes-preview h6 { font-size: 1em; margin: 0.3em 0; }
+
+.dsanotes-preview p { margin: 0.4em 0; }
+.dsanotes-preview ul,
+.dsanotes-preview ol { margin: 0.4em 0; padding-left: 1.4em; }
+
+.dsanotes-preview code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.dsanotes-preview pre {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.4em 0;
+}
+
+.dsanotes-preview pre code {
+  background: none;
+  padding: 0;
 }
 
 .dsanotes-save-btn {
