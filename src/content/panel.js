@@ -79,6 +79,20 @@ export function togglePanel() {
     isCollapsed = !isCollapsed;
     container.classList.toggle("dsanotes-collapsed",isCollapsed);
     collapseBtn.textContent = isCollapsed ? "+":"-";
+
+    // if it is not collapsed which means it has been toggled open 
+    if(!isCollapsed) {
+        const textarea = panelElements.textarea;
+        const previewDiv = container.querySelector('.dsanotes-preview');
+        // if it is not an existing note then move cursor to the panel to start typing 
+        if(!textarea.value.trim()) {
+            // this is same utility as the click listener on previewDiv present in renderPanel function 
+            textarea.style.display = "block";
+            previewDiv.style.display = "none";
+            textarea.focus();
+            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+        }
+    }
 }
 
 export function renderPanel({ site, questionId, title, note, onSave}) {
