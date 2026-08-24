@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    width: 260px;
+    background: #1a1b2e;
+    color: #e5e5f0;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+.popup-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 10px;
+}
+
+.popup-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #e5e5f0;
+}
+
+.popup-count {
+    margin: 0;
+    font-size: 12px;
+    color: #a5a5c0;
+}
+
+.popup-export-btn {
+    padding: 8px 12px;
+    background: #14b8a6;
+    color: #0a0a14;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.popup-export-btn:hover:not(:disabled) {
+    background: #12a396;
+}
+
+.popup-export-btn:disabled {
+    background: #3d3b64;
+    color: #7a7a96;
+    cursor: not-allowed;
+}

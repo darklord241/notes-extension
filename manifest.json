@@ -35,5 +35,10 @@
             },
             "description": "Toggle the notes panel"
         }
+    },
+
+    "action": {
+        "default_popup": "src/popup/popup.html",
+        "default_title": "DSA Notes"
     }
 }

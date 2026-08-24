@@ -28,3 +28,7 @@ export async function deleteNote(site, questionId) {
     await db.notes.delete([ site, questionId ]);
 }
 
+export async function getAllNotes() {
+    return await db.notes.toArray();
+}
+
