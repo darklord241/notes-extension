@@ -35,9 +35,9 @@ function buildMd(records) {
             const title = slugToTitle(note.questionId);
             const lastUpdatedAt = formatDate(note.updatedAt);
             output += `### ${title}\n`;
-            output += `*Last Updated: ${lastUpdatedAtpdatedAt}\n\n`;
+            output += `*Last Updated: ${lastUpdatedAt}*\n\n`;
             output += `${note.content.trim()}\n\n`;
-            output += `---`;
+            output += `---\n\n`;
         }
     }
     return output;

@@ -16,6 +16,8 @@
 
 
 
-<br> havent tested export function yet - 24th Aug 2026 
+<br> havent tested export function yet - 24th Aug 2026
 
-
+### errors found after testing
+- typo : variable name `lastUpdatedAt` in export.js was typed wrong which was found in the service worker's console 
+- changed the popup.html textcontent for export button to match the one in popup.js 
