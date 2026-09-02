@@ -41,7 +41,7 @@ function makeDraggable(panelEl, headerEl) {
   let startX, startY, startLeft, startTop;
 
   function onMouseDown(e) {
-    if (e.target.closest(".dsanotes-collapse-btn")) return;
+    if (e.target.closest(".collapse-btn")) return;
 
     startX = e.clientX;
     startY = e.clientY;
@@ -75,7 +75,7 @@ function makeDraggable(panelEl, headerEl) {
 export function togglePanel() {
     if(!panelElements) return;
     const container = panelElements.container;
-    const collapseBtn = container.querySelector(".dsanotes-collapse-btn");
+    const collapseBtn = container.querySelector(".collapse-btn");
     isCollapsed = !isCollapsed;
     container.classList.toggle("dsanotes-collapsed",isCollapsed);
     collapseBtn.textContent = isCollapsed ? "+":"-";
@@ -83,7 +83,7 @@ export function togglePanel() {
     // if it is not collapsed which means it has been toggled open 
     if(!isCollapsed) {
         const textarea = panelElements.textarea;
-        const previewDiv = container.querySelector('.dsanotes-preview');
+        const previewDiv = container.querySelector('.preview');
         // if it is not an existing note then move cursor to the panel to start typing 
         if(!textarea.value.trim()) {
             // this is same utility as the click listener on previewDiv present in renderPanel function 
@@ -95,7 +95,7 @@ export function togglePanel() {
     }
 }
 
-export function renderPanel({ site, questionId, title, note, onSave}) {
+export function renderPanel({ site, questionId, title, note, onSave, onDelete}) {
     // console.log("renderPanel called with", questionId, title);
     const root = ensureShadowHost();
     // console.log("root reference", root, "children count", root.children.length);
@@ -106,14 +106,17 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         <div class="dsanotes-header">
             <span class="dsanotes-title">${slugToTitle(questionId)}</span>
             <div class="dsanotes-header-controls">
-                <span class="dsanotes-status"></span>
-                <button class="dsanotes-collapse-btn">${isCollapsed ? "+":"-"}</button>
+                <span class="status"></span>
+                <button class="collapse-btn">${isCollapsed ? "+":"-"}</button>
             </div>
         </div>
         <div class="dsanotes-body">
             <textarea class="dsanotes-textarea" placeholder="write your notes"></textarea>
-            <div class="dsanotes-preview" style="display:none;"></div>
-            <button class="dsanotes-save-btn">Save</button>
+            <div class="preview" style="display:none;"></div>
+            <div class="btns">
+                <button class="save-btn">Save</button>
+                <button class="dlt-btn">Delete</button>
+            </div>
         </div>
     `;
 
@@ -131,17 +134,14 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         autosaveTimer= null;
     }
 
-    const previewDiv = container.querySelector(".dsanotes-preview");
+    const previewDiv = container.querySelector(".preview");
     const header = container.querySelector(".dsanotes-header");
-    const collapseBtn = container.querySelector(".dsanotes-collapse-btn");
-    const saveBtn = container.querySelector(".dsanotes-save-btn");
-    const status = container.querySelector(".dsanotes-status");
+    const collapseBtn = container.querySelector(".collapse-btn");
+    const saveBtn = container.querySelector(".save-btn");
+    const status = container.querySelector(".status");
+    const deleteBtn = container.querySelector(".dlt-btn");
 
     makeDraggable(container, header);
-
-    collapseBtn.addEventListener("click", togglePanel);
-
-    let lastSavedContent = note?.content ?? "";
 
     function doSave() {
         status.textContent = "Saving ...";
@@ -149,11 +149,16 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
             content: textarea.value,
             createdAt: note?.createdAt
         });
-        lastSavedContent = textarea.value;
+        panelElements.lastSavedContent = textarea.value;
+    }
+
+    function delNote() {
+        status.textContent = "Deleting ...";
+        onDelete(questionId);
     }
 
     function handleInput() {
-        const isUpdated = textarea.value !== lastSavedContent;
+        const isUpdated = textarea.value !== panelElements.lastSavedContent;
         status.textContent = isUpdated ? "Unsaved" : "";
 
         if(autosaveTimer) clearTimeout(autosaveTimer);
@@ -181,6 +186,8 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         previewDiv.style.display = "block";
     }   
 
+    collapseBtn.addEventListener("click", togglePanel);
+
     textarea.addEventListener("input",() => {
         showEditMode();
         handleInput();
@@ -192,6 +199,8 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         textarea.setSelectionRange(textarea.value.length, textarea.value.length);
     });
 
+    deleteBtn.addEventListener("click", delNote);
+
     saveBtn.addEventListener("click", () => {
         if(autosaveTimer) clearTimeout(autosaveTimer);
         doSave();
@@ -201,7 +210,7 @@ export function renderPanel({ site, questionId, title, note, onSave}) {
         showPreviewMode();
     }
 
-    panelElements = { container, textarea, status };
+    panelElements = { container, textarea, status, lastSavedContent: note?.content ?? "" };
 }
 
 export function updatePanel(savedRecord) {
@@ -221,4 +230,21 @@ export function removePanel() {
         clearTimeout(autosaveTimer);
         autosaveTimer = null;
     }
+}
+
+export function clearPanel() {
+    if(!panelElements) return;
+    
+    panelElements.textarea.value = "";
+    panelElements.lastSavedContent = "";
+
+    // same as showEditMode function in renderPanel 
+    panelElements.textarea.style.display = "block";
+    const previewDiv = panelElements.container.querySelector(".preview");
+    previewDiv.style.display = "none";
+
+    panelElements.status.textContent = "Deleted";
+    setTimeout(() => {
+        if(panelElements) panelElements.status.textContent = "";
+    }, 1500); 
 }

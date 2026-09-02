@@ -1,5 +1,5 @@
 import { MESSAGE_TYPES } from "../shared/constants.js";
-import { getNote, saveNote } from "../storage/notes-store.js";
+import { getNote, saveNote, deleteNote } from "../storage/notes-store.js";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if(message.type === MESSAGE_TYPES.GET_NOTE) {
@@ -9,6 +9,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if(message.type === MESSAGE_TYPES.SAVE_NOTE) {
         saveNote(message.site, message.questionId, message.noteData).then(sendResponse);
         return true; 
+    }
+    if(message.type === MESSAGE_TYPES.DELETE_NOTE) {
+        deleteNote(message.site, message.questionId).then(sendResponse);
+        return true;
     }
 });
 

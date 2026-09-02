@@ -1,6 +1,6 @@
 import { leetcodeAdapter } from "../adapters/leetcode-adapter.js";
 import { codeforcesAdapter } from "../adapters/codeforces-adapter.js";
-import { renderPanel, updatePanel, removePanel, togglePanel } from "./panel.js";
+import { renderPanel, updatePanel, removePanel, togglePanel, clearPanel } from "./panel.js";
 import { MESSAGE_TYPES } from "../shared/constants.js";
 // import { migrateOldNotes } from "../storage/migrate.js";
 
@@ -21,6 +21,14 @@ function saveNote(site,questionId,noteData) {
         site,
         questionId,
         noteData
+    })
+}
+
+function deleNote(site,questionId) {
+    return chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.DELETE_NOTE,
+        site,
+        questionId
     })
 }
 
@@ -54,7 +62,8 @@ async function handleQuestionChange() {
             site: adapter.site,
             questionId: info.id,
             note: existingNote,
-            onSave: (questionId, noteData) => handleSave(adapter.site, questionId, noteData)
+            onSave: (questionId, noteData) => handleSave(adapter.site, questionId, noteData),
+            onDelete: (questionId) => handleDelete(adapter.site, questionId)
         });
     } finally {
         isProcessing = false;
@@ -64,6 +73,14 @@ async function handleQuestionChange() {
 async function handleSave(site, questionId, noteData) {
     const savedRecord = await saveNote(site,questionId,noteData);
     updatePanel(savedRecord);
+}
+
+async function handleDelete(site, questionId) {
+    // console.log("came upto content.js");
+    await deleNote(site,questionId);
+    // console.log("finished the db removal");
+    clearPanel();
+    // console.log("finished up in content.js");
 }
 
 chrome.runtime.onMessage.addListener((message) => {
