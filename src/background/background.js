@@ -36,4 +36,11 @@ chrome.commands.onCommand.addListener((command,tab) => {
             console.debug("TOGGLE_PANEL not delivered:", err.message);
         });
     }
+    else if(command === "toggle_mode") {
+        chrome.tabs.sendMessage(tab.id, {
+            type: MESSAGE_TYPES.TOGGLE_MODE
+        }).catch((err) => {
+            console.log("TOGGLE_MODE not delivered ", err.message);
+        });
+    }
 });

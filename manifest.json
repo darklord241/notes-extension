@@ -34,6 +34,12 @@
                 "default": "Alt+L"
             },
             "description": "Toggle the notes panel"
+        },
+        "toggle_mode": {
+            "suggested_key": {
+                "default": "Alt+K"
+            },
+            "description": "Toggle the panel mode"
         }
     },
 

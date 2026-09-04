@@ -1,6 +1,6 @@
 import { leetcodeAdapter } from "../adapters/leetcode-adapter.js";
 import { codeforcesAdapter } from "../adapters/codeforces-adapter.js";
-import { renderPanel, updatePanel, removePanel, togglePanel, clearPanel } from "./panel.js";
+import { renderPanel, updatePanel, removePanel, togglePanel, clearPanel, toggleMode } from "./panel.js";
 import { MESSAGE_TYPES } from "../shared/constants.js";
 // import { migrateOldNotes } from "../storage/migrate.js";
 
@@ -89,8 +89,12 @@ chrome.runtime.onMessage.addListener((message) => {
         handleQuestionChange().catch((err) => console.error("handleQuestionChange failed:",err));
     }
     else if(message.type === MESSAGE_TYPES.TOGGLE_PANEL) {
-        // console.log("toggle received in content.js ")
+        // console.log("toggle received in content.js ");
         togglePanel();
+    }
+    else if(message.type === MESSAGE_TYPES.TOGGLE_MODE) {
+        // console.log("toggle mode received in content.js");
+        toggleMode();
     }
 });
 

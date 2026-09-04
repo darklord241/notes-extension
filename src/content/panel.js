@@ -83,15 +83,56 @@ export function togglePanel() {
     // if it is not collapsed which means it has been toggled open 
     if(!isCollapsed) {
         const textarea = panelElements.textarea;
-        const previewDiv = container.querySelector('.preview');
         // if it is not an existing note then move cursor to the panel to start typing 
         if(!textarea.value.trim()) {
             // this is same utility as the click listener on previewDiv present in renderPanel function 
-            textarea.style.display = "block";
-            previewDiv.style.display = "none";
-            textarea.focus();
-            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            // basically moves to edit mode and also move the cursor to the panel to start typing
+            showEditMode();
         }
+    }
+}
+
+function showPreviewMode() {
+    if(!panelElements) return;
+    const textarea = panelElements.textarea;
+    const previewDiv = panelElements.container.querySelector(".preview");
+
+    function renderMarkdownSafely(text) {
+        return DOMPurify.sanitize(marked.parse(text));
+    }   
+
+    if(!textarea.value.trim()) {
+        panelElements.status = "Ntg to preview";
+        return; // nothing to render then stay in edit mode 
+    }
+    previewDiv.innerHTML = renderMarkdownSafely(textarea.value);
+    textarea.style.display = 'none';
+    previewDiv.style.display = 'block';
+}
+
+function showEditMode() {
+    if(!panelElements) return;
+    const textarea = panelElements.textarea;
+    const previewDiv = panelElements.container.querySelector(".preview");
+
+    function focusCursor() {
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    }
+
+    textarea.style.display = 'block';
+    previewDiv.style.display = 'none';
+    focusCursor();
+}
+
+export function toggleMode() {
+    if(!panelElements) return;
+    const textarea = panelElements.textarea;
+    if(textarea.style.display === 'none') {
+        showEditMode();
+    }
+    else {
+        showPreviewMode();
     }
 }
 
@@ -133,6 +174,10 @@ export function renderPanel({ site, questionId, title, note, onSave, onDelete}) 
         clearTimeout(autosaveTimer);
         autosaveTimer= null;
     }
+    if(previewTimer) {
+        clearTimeout(previewTimer);
+        previewTimer = null;
+    }
 
     const previewDiv = container.querySelector(".preview");
     const header = container.querySelector(".dsanotes-header");
@@ -170,22 +215,6 @@ export function renderPanel({ site, questionId, title, note, onSave, onDelete}) 
         previewTimer = setTimeout(showPreviewMode, 2000);
     }
 
-    function renderMarkdownSafely(text) {
-        return DOMPurify.sanitize(marked.parse(text));
-    }
-
-    function showEditMode() {
-        textarea.style.display = 'block';
-        previewDiv.style.display = 'none';
-    }
-
-    function showPreviewMode() {
-        if(!textarea.value.trim()) return; // nothing to render then stay in edit mode 
-        previewDiv.innerHTML = renderMarkdownSafely(textarea.value);
-        textarea.style.display = "none";
-        previewDiv.style.display = "block";
-    }   
-
     collapseBtn.addEventListener("click", togglePanel);
 
     textarea.addEventListener("input",() => {
@@ -193,11 +222,7 @@ export function renderPanel({ site, questionId, title, note, onSave, onDelete}) 
         handleInput();
     });
 
-    previewDiv.addEventListener("click", () => {
-        showEditMode();
-        textarea.focus();
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-    });
+    previewDiv.addEventListener("click",showEditMode);
 
     deleteBtn.addEventListener("click", delNote);
 
@@ -230,6 +255,10 @@ export function removePanel() {
         clearTimeout(autosaveTimer);
         autosaveTimer = null;
     }
+    if(previewTimer) {
+        clearTimeout(previewTimer);
+        previewTimer = null;
+    }
 }
 
 export function clearPanel() {
@@ -238,10 +267,7 @@ export function clearPanel() {
     panelElements.textarea.value = "";
     panelElements.lastSavedContent = "";
 
-    // same as showEditMode function in renderPanel 
-    panelElements.textarea.style.display = "block";
-    const previewDiv = panelElements.container.querySelector(".preview");
-    previewDiv.style.display = "none";
+    showEditMode();
 
     panelElements.status.textContent = "Deleted";
     setTimeout(() => {
