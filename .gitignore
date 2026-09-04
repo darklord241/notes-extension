@@ -1,5 +1,5 @@
 package-lock.json
 node_modules
 dist/
-*.png
+storage.png
 src/storage/migrate.js

@@ -102,7 +102,10 @@ function showPreviewMode() {
     }   
 
     if(!textarea.value.trim()) {
-        panelElements.status = "Ntg to preview";
+        panelElements.status.textContent = "Ntg to preview";
+        setTimeout(() => {
+            if(panelElements) panelElements.status.textContent = "";
+        }, 1000);
         return; // nothing to render then stay in edit mode 
     }
     previewDiv.innerHTML = renderMarkdownSafely(textarea.value);
