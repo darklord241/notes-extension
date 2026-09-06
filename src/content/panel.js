@@ -88,6 +88,7 @@ export function togglePanel() {
             // this is same utility as the click listener on previewDiv present in renderPanel function 
             // basically moves to edit mode and also move the cursor to the panel to start typing
             showEditMode();
+            focusCursor();
         }
     }
 }
@@ -113,19 +114,19 @@ function showPreviewMode() {
     previewDiv.style.display = 'block';
 }
 
+function focusCursor() {
+    const textarea = panelElements.textarea;
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+}
+
 function showEditMode() {
     if(!panelElements) return;
     const textarea = panelElements.textarea;
     const previewDiv = panelElements.container.querySelector(".preview");
 
-    function focusCursor() {
-        textarea.focus();
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-    }
-
     textarea.style.display = 'block';
     previewDiv.style.display = 'none';
-    focusCursor();
 }
 
 export function toggleMode() {
@@ -133,6 +134,7 @@ export function toggleMode() {
     const textarea = panelElements.textarea;
     if(textarea.style.display === 'none') {
         showEditMode();
+        focusCursor();
     }
     else {
         showPreviewMode();
@@ -225,7 +227,10 @@ export function renderPanel({ site, questionId, title, note, onSave, onDelete}) 
         handleInput();
     });
 
-    previewDiv.addEventListener("click",showEditMode);
+    previewDiv.addEventListener("click",() => {
+        showEditMode();
+        focusCursor();
+    });
 
     deleteBtn.addEventListener("click", delNote);
 
@@ -271,6 +276,7 @@ export function clearPanel() {
     panelElements.lastSavedContent = "";
 
     showEditMode();
+    focusCursor();
 
     panelElements.status.textContent = "Deleted";
     setTimeout(() => {
